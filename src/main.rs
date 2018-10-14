@@ -1,46 +1,27 @@
-use std::ops::{Add, Sub};
+use nalgebra::Vector3;
+use std::cmp::max;
 
 #[derive(Eq, PartialEq)]
 struct Hex {
-    q: i32,
-    r: i32,
-    s: i32
+    coords: Vector3<i32>,
 }
 
 impl Hex {
     fn new(q: i32, r: i32) -> Self {
-        Hex { q, r, s: (-1 * q) - r}
+        Hex {
+            coords: Vector3::new(q, r, -1 * q - r),
+        }
     }
 
-    fn q(&self) -> i32 {
-        self.q
-    }
-
-    fn r(&self) -> i32 {
-        self.r
-    }
-
-    fn s(&self) -> i32 {
-        self.s
-    }
-}
-
-impl Add for Hex {
-    type Output = Hex;
-
-    fn add(self, rhs: Self) -> <Self as Add<Self>>::Output {
-        Hex::new(self.q + rhs.q, self.r + rhs.r)
-    }
-}
-
-impl Sub for Hex {
-    type Output = Hex;
-
-    fn sub(self, rhs: Self) -> <Self as Add<Self>>::Output {
-        Hex::new(self.q - rhs.q, self.r - rhs.r)
+    fn distance_from(&self, other: &Hex) -> i32 {
+        let distance = self.coords - other.coords;
+        max(max(distance.x.abs(), distance.y.abs()), distance.z.abs())
     }
 }
 
 fn main() {
-    println!("Hello, world!");
+    let hex1 = Hex::new(-3, 0);
+    let hex2 = Hex::new(-2, 1);
+    let distance = hex1.distance_from(&hex2);
+    println!("distance: {}", distance);
 }
