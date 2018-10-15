@@ -1,5 +1,5 @@
-import {Renderer} from "./Renderer.js";
-import {is_ok} from "./Result.js";
+import {Renderer} from "./Renderer";
+import {is_ok} from "./Result";
 
 const vsSource = `
     attribute vec4 aVertexPosition;
@@ -19,15 +19,13 @@ const fsSource = `
   `;
 
 document.addEventListener('DOMContentLoaded', function () {
-  const rendererResult = new Renderer.Builder()
-    .withCanvas(document.querySelector('#viewport'))
-    .withVertexShader(vsSource)
-    .withFragmentShader(fsSource)
-    .build();
+    const rendererResult = new Renderer.Builder()
+        .withCanvas(document.querySelector('#viewport'))
+        .build();
 
-  if (is_ok(rendererResult)) {
-    const renderer = rendererResult.value;
-  } else {
-    alert(`An error occurred while initializing the renderer: ${rendererResult.message}`);
-  }
+    if (is_ok(rendererResult)) {
+        const renderer = rendererResult.value;
+    } else {
+        alert(`An error occurred while initializing the renderer: ${rendererResult.message}`);
+    }
 });
