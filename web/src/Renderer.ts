@@ -86,9 +86,9 @@ export class Renderer {
             }
 
             const canvas = this.canvas as HTMLCanvasElement;
-            const gl = canvas.getContext('webgl');
+            const gl = canvas.getContext('webgl2');
             if (gl === null) {
-                return Err('Unable to initialize WebGL. Your browser may not support it.');
+                return Err('Unable to initialize WebGL 2. Your browser may not support it.');
             }
 
             if (this.entityDescriptors.length === 0) {
@@ -181,9 +181,11 @@ export class Renderer {
             gl.shaderSource(shader, source);
             gl.compileShader(shader);
 
-            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-                gl.deleteShader(shader);
-                return Err(gl.getShaderInfoLog(shader) || 'Unspecified error');
+            const compileStatus = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+            if (!compileStatus) {
+                const err = Err(gl.getShaderInfoLog(shader) || `Unspecified error. Compile status: ${compileStatus}`);
+              gl.deleteShader(shader);
+                return  err;
             }
 
             if (!shader) {

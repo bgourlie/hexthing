@@ -3,20 +3,23 @@ import {is_ok} from "./Result";
 import {EntityDescriptor} from "./EntityDescriptor";
 import {Entity} from "./Entity";
 
-const vsSource = `
-    attribute vec4 aVertexPosition;
+const vsSource = `#version 300 es
+    in vec4 position;
 
     uniform mat4 uModelViewMatrix;
     uniform mat4 uProjectionMatrix;
 
     void main() {
-      gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+      gl_Position = uProjectionMatrix * uModelViewMatrix * position;
     }
   `;
 
-const fsSource = `
+const fsSource = `#version 300 es
+    precision mediump float;
+    out vec4 fragColor;
+    
     void main() {
-      gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+      fragColor = vec4(1.0, 1.0, 1.0, 1.0);
     }
   `;
 
