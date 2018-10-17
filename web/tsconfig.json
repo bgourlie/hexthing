@@ -4,16 +4,14 @@
     "alwaysStrict": true,
     "target": "es6",
     "module": "es6",
+    "moduleResolution": "node",
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "baseUrl": ".",
-    "paths": {
-      "gl-matrix": [
-        "node_modules/gl-matrix/dist/gl-matrix"
-      ]
-    },
+    "include": [
+      "src/**/*"
+    ],
     "typeRoots": [
       "node_modules/@types"
     ]
