@@ -4,7 +4,7 @@ import {EntityDescriptor} from "./EntityDescriptor";
 import {Entity} from "./Entity";
 
 const vsSource = `#version 300 es
-    in vec4 position;
+    layout(location = 0) in vec4 position;
 
     uniform mat4 uModelViewMatrix;
     uniform mat4 uProjectionMatrix;
@@ -28,21 +28,25 @@ const planeDescriptor: EntityDescriptor= {
     id: 'plane',
     fragmentShader: fsSource,
     vertexShader: vsSource,
-    drawMode: 1, //todo: this is being ignored and triangle_strip is always being used (need gl instance to access enum)
-    verticesDescriptor: {
-        bufferType: 1, //todo: this is being ignored and array_buffer is always being used (need gl instance to access enum)
-        numComponents: 2,
-        shaderIdentifier: 'aVertexPosition',
-    }
+    drawMode: WebGL2RenderingContext.TRIANGLE_STRIP,
+    inputs: [
+        {
+          location: 0,
+          bufferType: WebGL2RenderingContext.ARRAY_BUFFER,
+          bufferDataType: WebGL2RenderingContext.FLOAT,
+          numComponents: 2
+        }
+      ]
 };
 
 const plane: Entity = {
     descriptorId: 'plane',
-    vertices: [
-      -1.0,  1.0,
-      1.0,  1.0,
-      -1.0, -1.0,
-      1.0, -1.0,
+    verticesToRender: 4,
+    inputs: [
+       {
+          location: 0,
+          vertices: [- 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0]
+       }
     ]
 };
 

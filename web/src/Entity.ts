@@ -1,4 +1,10 @@
 export interface Entity {
     readonly descriptorId: string;
-    readonly vertices: [number, number, number, number, number, number, number, number];
+    readonly verticesToRender: number;
+    readonly inputs: Input[];
+}
+
+interface Input {
+    location: number;
+    vertices: number[];
 }

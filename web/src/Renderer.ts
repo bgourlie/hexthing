@@ -5,10 +5,10 @@ import {EntityRenderer} from "./EntityRenderer";
 import {Entity} from "./Entity";
 
 export class Renderer {
-    private readonly gl: WebGLRenderingContext;
+    private readonly gl: WebGL2RenderingContext;
     private readonly entityRenderers: Map<string, EntityRenderer>;
 
-    private constructor(gl: WebGLRenderingContext, entityDescriptors: Map<string, EntityRenderer>) {
+    private constructor(gl: WebGL2RenderingContext, entityDescriptors: Map<string, EntityRenderer>) {
         this.gl = gl;
         this.entityRenderers = entityDescriptors;
     }
@@ -33,30 +33,20 @@ export class Renderer {
                 return Err(`No entity renderer with descriptor id '${entity.descriptorId}' found`);
             }
 
-            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, entity.vertices);
-            this.gl.vertexAttribPointer(
-                renderer.vertexLocation,
-                renderer.descriptor.verticesDescriptor.numComponents,
-                renderer.descriptor.verticesDescriptor.bufferType,
-                false, // don't normalize
-                0, // stride: how many bytes to get from one set of values to the next (0 = use type and numComponents above)
-                0); // offset: how many bytes inside the buffer to start from
+            this.gl.bindVertexArray(renderer.vertexArray);
 
-            this.gl.enableVertexAttribArray(renderer.vertexLocation);
-
-
-            const positionBuffer = this.gl.createBuffer();
-            this.gl.bindBuffer(this.gl.ARRAY_BUFFER, positionBuffer);
-
-            this.gl.bufferData(renderer.descriptor.verticesDescriptor.bufferType,
-                new Float32Array(entity.vertices),
-                this.gl.STATIC_DRAW);
+            for (let i = 0; i < renderer.descriptor.inputs.length; i++) {
+                const inputDescriptor = renderer.descriptor.inputs[i];
+                const vertices = entity.inputs[i].vertices;
+                this.gl.bufferData(inputDescriptor.location, new Float32Array(vertices), this.gl.STATIC_DRAW);
+            }
 
             this.gl.useProgram(renderer.program);
 
             this.gl.uniformMatrix4fv(renderer.projectionMatrixLocation, false, projectionMatrix);
             this.gl.uniformMatrix4fv(renderer.modelViewMatrixLocation, false, modelViewMatrix);
-            this.gl.drawArrays(renderer.descriptor.drawMode, 0, entity.vertices.length);
+            this.gl.drawArrays(renderer.descriptor.drawMode, 0, entity.verticesToRender);
+            this.gl.bindVertexArray(null);
         }
 
         return Ok(null);
@@ -109,7 +99,6 @@ export class Renderer {
                     return Err(shaderProgramResult.message);
                 }
 
-                const vertexLocation = gl.getAttribLocation(shaderProgramResult.value, 'aVertexPosition');
                 const projectionMatrixLocation = gl.getUniformLocation(shaderProgramResult.value, 'uProjectionMatrix');
                 const modelViewMatrixLocation = gl.getUniformLocation(shaderProgramResult.value, 'uModelViewMatrix');
 
@@ -121,10 +110,34 @@ export class Renderer {
                     return Err('Failed to get model view matrix location');
                 }
 
+                const vertexArray = gl.createVertexArray();
+
+                if (vertexArray === null) {
+                    return Err('Unable to create vertex array object');
+                }
+
+                const buffer = gl.createBuffer();
+                gl.bindVertexArray(vertexArray);
+
+                for (let i = 0; i < descriptor.inputs.length; i++) {
+                    const inputDescriptor = descriptor.inputs[i];
+                    gl.enableVertexAttribArray(inputDescriptor.location);
+                    gl.bindBuffer(inputDescriptor.bufferType, buffer);
+                    gl.vertexAttribPointer(
+                      inputDescriptor.location,
+                      inputDescriptor.numComponents,
+                      inputDescriptor.bufferDataType,
+                      false,
+                      0,
+                      0);
+                }
+
+                gl.bindVertexArray(null);
+
                 const entityRenderer: EntityRenderer = {
                     descriptor: descriptor,
                     program: shaderProgramResult.value,
-                    vertexLocation,
+                    vertexArray,
                     projectionMatrixLocation,
                     modelViewMatrixLocation
                 };
@@ -184,7 +197,7 @@ export class Renderer {
             const compileStatus = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
             if (!compileStatus) {
                 const err = Err(gl.getShaderInfoLog(shader) || `Unspecified error. Compile status: ${compileStatus}`);
-              gl.deleteShader(shader);
+                gl.deleteShader(shader);
                 return  err;
             }
 
