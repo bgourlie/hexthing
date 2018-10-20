@@ -1,7 +1,7 @@
 import { Renderer } from './Renderer';
-import { is_ok } from './Result';
+import { is_err } from './Result';
 import { EntityDescriptor } from './EntityDescriptor';
-import { Entity } from './Entity';
+import { Scene } from './Scene';
 
 const vsSource = `#version 300 es
     layout(location = 0) in vec4 position;
@@ -40,27 +40,46 @@ const planeDescriptor: EntityDescriptor = {
     verticesToRender: 4
 };
 
-const entities: Entity[] = [
-    {
-        descriptorId: 'plane',
-        position: [-0.0, 0.0, -6.0]
-    },
-    {
-        descriptorId: 'plane',
-        position: [-2.5, 1.5, -9.0]
-    }
-];
-
 document.addEventListener('DOMContentLoaded', function() {
+    const sceneResult = new Scene.Builder()
+        .withAspectRatio(1)
+        .withFieldOfView(45 * Math.PI / 180) // in radians
+        .withZNear(0.1)
+        .withZFar(100.0)
+        .build();
+
+    if (is_err(sceneResult)) {
+        alert(sceneResult.message);
+        return;
+    }
+
     const rendererResult = new Renderer.Builder()
         .withCanvas(document.querySelector('#viewport'))
         .registerEntity(planeDescriptor)
         .build();
 
-    if (is_ok(rendererResult)) {
-        const renderer = rendererResult.value;
-        renderer.drawScene(entities);
-    } else {
+    if (is_err(rendererResult)) {
         alert(`An error occurred while initializing the renderer: ${rendererResult.message}`);
+        return;
     }
+
+    const scene = sceneResult.value;
+    const renderer = rendererResult.value;
+
+    scene.addEntity({
+        descriptorId: 'plane',
+        position: [-0.0, 0.0, -6.0]
+    });
+
+    scene.addEntity({
+        descriptorId: 'plane',
+        position: [-2.5, 1.5, -9.0]
+    });
+
+    scene.addEntity({
+        descriptorId: 'plane',
+        position: [2.5, -1.5, -9.0]
+    });
+
+    renderer.drawScene(scene);
 });

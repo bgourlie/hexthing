@@ -2,7 +2,7 @@ import { Err, is_err, Ok, Result } from './Result';
 import { mat4 } from 'gl-matrix';
 import { EntityDescriptor } from './EntityDescriptor';
 import { EntityRenderer } from './EntityRenderer';
-import { Entity } from './Entity';
+import { Scene } from './Scene';
 
 export class Renderer {
     private readonly gl: WebGL2RenderingContext;
@@ -13,38 +13,33 @@ export class Renderer {
         this.entityRenderers = entityRenderers;
     }
 
-    drawScene(entities: Entity[]): Result<null> {
+    drawScene(scene: Scene): Result<null> {
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-        const fieldOfView = 45 * Math.PI / 180; // in radians
-        const aspect = this.gl.canvas.clientWidth / this.gl.canvas.clientHeight;
-        const zNear = 0.1;
-        const zFar = 100.0;
-        const projectionMatrix = mat4.create();
-        mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
-        const numEntities = entities.length;
-        for (let i = 0; i < numEntities; i++) {
-            const entity = entities[i];
-            const e = this.entityRenderers.get(entity.descriptorId);
+        const projectionMatrix = scene.projectionMatrix;
+        for (const [descriptorId, entities] of scene.entities) {
+            const entityRenderer = this.entityRenderers.get(descriptorId);
 
-            if (!e) {
-                return Err(`No renderer found for descriptorId '${entity.descriptorId}'`);
+            if (!entityRenderer) {
+                return Err(`No renderer found for descriptorId '${descriptorId}'`);
             }
 
-            const modelViewMatrix = mat4.create();
-            mat4.translate(modelViewMatrix, modelViewMatrix, entity.position);
+            this.gl.bindVertexArray(entityRenderer.vertexArray);
 
-            this.gl.bindVertexArray(e.vertexArray);
-
-            for (let i = 0; i < e.descriptor.inputs.length; i++) {
-                const inputDescriptor = e.descriptor.inputs[i];
+            for (let i = 0; i < entityRenderer.descriptor.inputs.length; i++) {
+                const inputDescriptor = entityRenderer.descriptor.inputs[i];
                 this.gl.bufferData(inputDescriptor.bufferType, inputDescriptor.vertices, this.gl.STATIC_DRAW, 0);
             }
 
-            this.gl.useProgram(e.program);
+            this.gl.useProgram(entityRenderer.program);
 
-            this.gl.uniformMatrix4fv(e.projectionMatrixLocation, false, projectionMatrix);
-            this.gl.uniformMatrix4fv(e.modelViewMatrixLocation, false, modelViewMatrix);
-            this.gl.drawArrays(e.descriptor.drawMode, 0, e.descriptor.verticesToRender);
+            for (const entity of entities) {
+                const modelViewMatrix = mat4.create();
+                mat4.translate(modelViewMatrix, modelViewMatrix, entity.position);
+
+                this.gl.uniformMatrix4fv(entityRenderer.projectionMatrixLocation, false, projectionMatrix);
+                this.gl.uniformMatrix4fv(entityRenderer.modelViewMatrixLocation, false, modelViewMatrix);
+                this.gl.drawArrays(entityRenderer.descriptor.drawMode, 0, entityRenderer.descriptor.verticesToRender);
+            }
             this.gl.bindVertexArray(null);
         }
 
