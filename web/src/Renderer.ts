@@ -2,6 +2,7 @@ import {Err, is_err, Ok, Result} from "./Result";
 import {mat4} from "gl-matrix"
 import {EntityDescriptor} from "./EntityDescriptor";
 import {EntityRenderer} from "./EntityRenderer";
+import {Entity} from "./Entity";
 
 export class Renderer {
     private readonly gl: WebGL2RenderingContext;
@@ -12,7 +13,7 @@ export class Renderer {
         this.entityRenderers = entityRenderers;
     }
 
-    drawScene(): Result<null> {
+    drawScene(entities: Entity[]): Result<null> {
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
         const fieldOfView = 45 * Math.PI / 180;   // in radians
         const aspect = this.gl.canvas.clientWidth / this.gl.canvas.clientHeight;
@@ -20,9 +21,18 @@ export class Renderer {
         const zFar = 100.0;
         const projectionMatrix = mat4.create();
         mat4.perspective(projectionMatrix, fieldOfView, aspect, zNear, zFar);
-        const modelViewMatrix = mat4.create();
-        mat4.translate(modelViewMatrix, modelViewMatrix, [-0.0, 0.0, -6.0]);
-        for (const e of this.entityRenderers.values()) {
+        const numEntities = entities.length;
+        for (let i = 0; i < numEntities; i++) {
+            const entity = entities[i];
+            const e = this.entityRenderers.get(entity.descriptorId);
+
+            if (!e) {
+                return Err(`No renderer found for descriptorId '${entity.descriptorId}'`);
+            }
+
+            const modelViewMatrix = mat4.create();
+            mat4.translate(modelViewMatrix, modelViewMatrix, entity.position);
+
             this.gl.bindVertexArray(e.vertexArray);
 
             for (let i = 0; i < e.descriptor.inputs.length; i++) {

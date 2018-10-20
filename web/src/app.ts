@@ -1,6 +1,7 @@
 import {Renderer} from "./Renderer";
 import {is_ok} from "./Result";
 import {EntityDescriptor} from "./EntityDescriptor";
+import {Entity} from "./Entity";
 
 const vsSource = `#version 300 es
     layout(location = 0) in vec4 position;
@@ -40,6 +41,17 @@ const planeDescriptor: EntityDescriptor= {
     verticesToRender: 4,
 };
 
+const entities: Entity[] = [
+    {
+        descriptorId: 'plane',
+        position: [-0.0, 0.0, -6.0]
+    },
+    {
+        descriptorId: 'plane',
+        position: [-2.5, 1.5, -9.0]
+    }
+];
+
 document.addEventListener('DOMContentLoaded', function () {
     const rendererResult = new Renderer.Builder()
         .withCanvas(document.querySelector('#viewport'))
@@ -48,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (is_ok(rendererResult)) {
         const renderer = rendererResult.value;
-        renderer.drawScene();
+        renderer.drawScene(entities);
     } else {
         alert(`An error occurred while initializing the renderer: ${rendererResult.message}`);
     }
