@@ -1,7 +1,6 @@
 import {Renderer} from "./Renderer";
 import {is_ok} from "./Result";
 import {EntityDescriptor} from "./EntityDescriptor";
-import {Entity} from "./Entity";
 
 const vsSource = `#version 300 es
     layout(location = 0) in vec4 position;
@@ -34,20 +33,11 @@ const planeDescriptor: EntityDescriptor= {
           location: 0,
           bufferType: WebGL2RenderingContext.ARRAY_BUFFER,
           bufferDataType: WebGL2RenderingContext.FLOAT,
-          numComponents: 2
-        }
-      ]
-};
-
-const plane: Entity = {
-    descriptorId: 'plane',
+          numComponents: 2,
+          vertices: [- 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0],
+        },
+      ],
     verticesToRender: 4,
-    inputs: [
-       {
-          location: 0,
-          vertices: [- 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0]
-       }
-    ]
 };
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -58,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (is_ok(rendererResult)) {
         const renderer = rendererResult.value;
-        renderer.drawScene([plane]);
+        renderer.drawScene();
     } else {
         alert(`An error occurred while initializing the renderer: ${rendererResult.message}`);
     }

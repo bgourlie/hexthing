@@ -4,6 +4,7 @@ export interface EntityDescriptor {
     readonly vertexShader: string;
     readonly inputs: InputDescriptor[];
     readonly drawMode: GLenum;
+    readonly verticesToRender: number;
 }
 
 interface InputDescriptor {
@@ -11,5 +12,6 @@ interface InputDescriptor {
     readonly bufferType: GLenum;
     readonly bufferDataType: GLenum;
     readonly numComponents: number;
+    readonly vertices: number[];
 }
 
