@@ -27,7 +27,7 @@ export class Renderer {
 
             for (let i = 0; i < e.descriptor.inputs.length; i++) {
                 const inputDescriptor = e.descriptor.inputs[i];
-                this.gl.bufferData(inputDescriptor.bufferType, new Float32Array(inputDescriptor.vertices), this.gl.STATIC_DRAW, 0);
+                this.gl.bufferData(inputDescriptor.bufferType, inputDescriptor.vertices, this.gl.STATIC_DRAW, 0);
             }
 
             this.gl.useProgram(e.program);

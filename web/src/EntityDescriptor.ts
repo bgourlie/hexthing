@@ -12,6 +12,6 @@ interface InputDescriptor {
     readonly bufferType: GLenum;
     readonly bufferDataType: GLenum;
     readonly numComponents: number;
-    readonly vertices: number[];
+    readonly vertices: Float32Array | Float64Array;
 }
 

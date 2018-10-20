@@ -34,7 +34,7 @@ const planeDescriptor: EntityDescriptor= {
           bufferType: WebGL2RenderingContext.ARRAY_BUFFER,
           bufferDataType: WebGL2RenderingContext.FLOAT,
           numComponents: 2,
-          vertices: [- 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0],
+          vertices: new Float32Array([- 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0]),
         },
       ],
     verticesToRender: 4,
