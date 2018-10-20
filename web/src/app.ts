@@ -24,20 +24,37 @@ const fsSource = `#version 300 es
   `;
 
 const planeDescriptor: EntityDescriptor = {
-    id: 'plane',
+    id: 'hexTile',
     fragmentShader: fsSource,
     vertexShader: vsSource,
-    drawMode: WebGL2RenderingContext.TRIANGLE_STRIP,
+    drawMode: WebGL2RenderingContext.TRIANGLE_FAN,
     inputs: [
         {
             location: 0,
             bufferType: WebGL2RenderingContext.ARRAY_BUFFER,
             bufferDataType: WebGL2RenderingContext.FLOAT,
             numComponents: 2,
-            vertices: new Float32Array([-1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0])
+            vertices: new Float32Array([
+                0.0,
+                0.0,
+                0.8660254037844387,
+                -0.5,
+                0.8660254037844387,
+                0.4,
+                0.0,
+                1.0,
+                -0.8660254037844387,
+                0.5,
+                -0.8660254037844386,
+                -0.5,
+                0,
+                -1,
+                0.8660254037844387,
+                -0.5
+            ])
         }
     ],
-    verticesToRender: 4
+    verticesToRender: 8
 };
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -67,8 +84,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const renderer = rendererResult.value;
 
     scene.addEntity({
-        descriptorId: 'plane',
-        sceneTransform: [-0.0, 0.0, -6.0]
+        descriptorId: 'hexTile',
+        sceneTransform: [-0.0, 0.0, -8.0]
     });
 
     renderer.drawScene(scene);
