@@ -68,17 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     scene.addEntity({
         descriptorId: 'plane',
-        position: [-0.0, 0.0, -6.0]
-    });
-
-    scene.addEntity({
-        descriptorId: 'plane',
-        position: [-2.5, 1.5, -9.0]
-    });
-
-    scene.addEntity({
-        descriptorId: 'plane',
-        position: [2.5, -1.5, -9.0]
+        sceneTransform: [-0.0, 0.0, -6.0]
     });
 
     renderer.drawScene(scene);

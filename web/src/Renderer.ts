@@ -34,7 +34,7 @@ export class Renderer {
 
             for (const entity of entities) {
                 const modelViewMatrix = mat4.create();
-                mat4.translate(modelViewMatrix, modelViewMatrix, entity.position);
+                mat4.translate(modelViewMatrix, modelViewMatrix, entity.sceneTransform);
 
                 this.gl.uniformMatrix4fv(entityRenderer.projectionMatrixLocation, false, projectionMatrix);
                 this.gl.uniformMatrix4fv(entityRenderer.modelViewMatrixLocation, false, modelViewMatrix);
