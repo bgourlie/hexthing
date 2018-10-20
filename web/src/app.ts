@@ -1,7 +1,7 @@
-import {Renderer} from "./Renderer";
-import {is_ok} from "./Result";
-import {EntityDescriptor} from "./EntityDescriptor";
-import {Entity} from "./Entity";
+import { Renderer } from './Renderer';
+import { is_ok } from './Result';
+import { EntityDescriptor } from './EntityDescriptor';
+import { Entity } from './Entity';
 
 const vsSource = `#version 300 es
     layout(location = 0) in vec4 position;
@@ -23,22 +23,21 @@ const fsSource = `#version 300 es
     }
   `;
 
-
-const planeDescriptor: EntityDescriptor= {
+const planeDescriptor: EntityDescriptor = {
     id: 'plane',
     fragmentShader: fsSource,
     vertexShader: vsSource,
     drawMode: WebGL2RenderingContext.TRIANGLE_STRIP,
     inputs: [
         {
-          location: 0,
-          bufferType: WebGL2RenderingContext.ARRAY_BUFFER,
-          bufferDataType: WebGL2RenderingContext.FLOAT,
-          numComponents: 2,
-          vertices: new Float32Array([- 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0]),
-        },
-      ],
-    verticesToRender: 4,
+            location: 0,
+            bufferType: WebGL2RenderingContext.ARRAY_BUFFER,
+            bufferDataType: WebGL2RenderingContext.FLOAT,
+            numComponents: 2,
+            vertices: new Float32Array([-1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0])
+        }
+    ],
+    verticesToRender: 4
 };
 
 const entities: Entity[] = [
@@ -52,7 +51,7 @@ const entities: Entity[] = [
     }
 ];
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     const rendererResult = new Renderer.Builder()
         .withCanvas(document.querySelector('#viewport'))
         .registerEntity(planeDescriptor)

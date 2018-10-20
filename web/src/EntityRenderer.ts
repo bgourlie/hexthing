@@ -1,4 +1,4 @@
-import {EntityDescriptor} from "./EntityDescriptor";
+import { EntityDescriptor } from './EntityDescriptor';
 
 export interface EntityRenderer {
     readonly descriptor: EntityDescriptor;

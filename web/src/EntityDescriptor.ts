@@ -14,4 +14,3 @@ interface InputDescriptor {
     readonly numComponents: number;
     readonly vertices: Float32Array | Float64Array;
 }
-

@@ -1,8 +1,8 @@
-import {Err, is_err, Ok, Result} from "./Result";
-import {mat4} from "gl-matrix"
-import {EntityDescriptor} from "./EntityDescriptor";
-import {EntityRenderer} from "./EntityRenderer";
-import {Entity} from "./Entity";
+import { Err, is_err, Ok, Result } from './Result';
+import { mat4 } from 'gl-matrix';
+import { EntityDescriptor } from './EntityDescriptor';
+import { EntityRenderer } from './EntityRenderer';
+import { Entity } from './Entity';
 
 export class Renderer {
     private readonly gl: WebGL2RenderingContext;
@@ -15,7 +15,7 @@ export class Renderer {
 
     drawScene(entities: Entity[]): Result<null> {
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-        const fieldOfView = 45 * Math.PI / 180;   // in radians
+        const fieldOfView = 45 * Math.PI / 180; // in radians
         const aspect = this.gl.canvas.clientWidth / this.gl.canvas.clientHeight;
         const zNear = 0.1;
         const zFar = 100.0;
@@ -123,12 +123,13 @@ export class Renderer {
                     gl.enableVertexAttribArray(inputDescriptor.location);
                     gl.bindBuffer(inputDescriptor.bufferType, buffer);
                     gl.vertexAttribPointer(
-                      inputDescriptor.location,
-                      inputDescriptor.numComponents,
-                      inputDescriptor.bufferDataType,
-                      false,
-                      0,
-                      0);
+                        inputDescriptor.location,
+                        inputDescriptor.numComponents,
+                        inputDescriptor.bufferDataType,
+                        false,
+                        0,
+                        0
+                    );
                 }
 
                 gl.bindVertexArray(null);
@@ -138,7 +139,7 @@ export class Renderer {
                     descriptor,
                     vertexArray,
                     projectionMatrixLocation,
-                    modelViewMatrixLocation,
+                    modelViewMatrixLocation
                 };
 
                 entityRenderers.set(descriptor.id, entityRenderer);
@@ -153,7 +154,6 @@ export class Renderer {
         }
 
         private static createProgram(gl: WebGLRenderingContext, descriptor: EntityDescriptor): Result<WebGLProgram> {
-
             const vertexShader = Renderer.Builder.compileShader(gl, gl.VERTEX_SHADER, descriptor.vertexShader);
 
             if (is_err(vertexShader)) {
@@ -177,7 +177,11 @@ export class Renderer {
             gl.linkProgram(shaderProgram);
 
             if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-                return Err(`Unable to initialize the shader program for entity descriptor [id ${descriptor.id}: ${gl.getProgramInfoLog(shaderProgram)}`);
+                return Err(
+                    `Unable to initialize the shader program for entity descriptor [id ${
+                        descriptor.id
+                    }: ${gl.getProgramInfoLog(shaderProgram)}`
+                );
             }
 
             return Ok(shaderProgram);
@@ -197,7 +201,7 @@ export class Renderer {
             if (!compileStatus) {
                 const err = Err(gl.getShaderInfoLog(shader) || `Unspecified error. Compile status: ${compileStatus}`);
                 gl.deleteShader(shader);
-                return  err;
+                return err;
             }
 
             if (!shader) {
@@ -206,5 +210,5 @@ export class Renderer {
                 return Ok(shader);
             }
         }
-    }
+    };
 }

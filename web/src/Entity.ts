@@ -1,4 +1,4 @@
 export interface Entity {
-    descriptorId: string,
-    position: [number, number, number]
+    descriptorId: string;
+    position: [number, number, number];
 }
