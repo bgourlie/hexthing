@@ -25,8 +25,7 @@ export class Renderer {
 
             this.gl.bindVertexArray(entityRenderer.vertexArray);
 
-            for (let i = 0; i < entityRenderer.descriptor.inputs.length; i++) {
-                const inputDescriptor = entityRenderer.descriptor.inputs[i];
+            for (const inputDescriptor of entityRenderer.descriptor.inputs) {
                 this.gl.bufferData(inputDescriptor.bufferType, inputDescriptor.vertices, this.gl.STATIC_DRAW, 0);
             }
 

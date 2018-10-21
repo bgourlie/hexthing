@@ -40,12 +40,12 @@ const planeDescriptor: EntityDescriptor = {
                 0.8660254037844387,
                 -0.5,
                 0.8660254037844387,
-                0.4,
+                0.5,
                 0.0,
                 1.0,
                 -0.8660254037844387,
                 0.5,
-                -0.8660254037844386,
+                -0.8660254037844387,
                 -0.5,
                 0,
                 -1,
@@ -85,7 +85,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     scene.addEntity({
         descriptorId: 'hexTile',
-        sceneTransform: [-0.0, 0.0, -8.0]
+        sceneTransform: [-0.88, 0.0, -8.0]
+    });
+
+    scene.addEntity({
+        descriptorId: 'hexTile',
+        sceneTransform: [0.88, 0.0, -8.0]
+    });
+
+    scene.addEntity({
+        descriptorId: 'hexTile',
+        sceneTransform: [0.0, 1.52, -8.0]
+    });
+
+    scene.addEntity({
+        descriptorId: 'hexTile',
+        sceneTransform: [-1.76, 1.52, -8.0]
+    });
+
+    scene.addEntity({
+        descriptorId: 'hexTile',
+        sceneTransform: [1.76, -1.52, -8.0]
     });
 
     renderer.drawScene(scene);
