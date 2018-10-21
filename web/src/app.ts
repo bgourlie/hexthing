@@ -83,30 +83,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const scene = sceneResult.value;
     const renderer = rendererResult.value;
 
-    scene.addEntity({
-        descriptorId: 'hexTile',
-        sceneTransform: [-0.88, 0.0, -8.0]
-    });
+    const size = 1.0;
+    const width = Math.sqrt(3.0) * size;
+    const height = 2.0 * size;
+    const halfWidth = width / 2.0;
+    const quarterHeight = height * (3.0 / 4.0);
+    const tileZ = -50.0;
+    const padding = 0.03;
+    let curY = -10.0;
 
-    scene.addEntity({
-        descriptorId: 'hexTile',
-        sceneTransform: [0.88, 0.0, -8.0]
-    });
+    for (let i = 0; i < 10; i++) {
+        const startX = i % 2 === 0 ? -10.0 : -10.0 - halfWidth;
 
-    scene.addEntity({
-        descriptorId: 'hexTile',
-        sceneTransform: [0.0, 1.52, -8.0]
-    });
-
-    scene.addEntity({
-        descriptorId: 'hexTile',
-        sceneTransform: [-1.76, 1.52, -8.0]
-    });
-
-    scene.addEntity({
-        descriptorId: 'hexTile',
-        sceneTransform: [1.76, -1.52, -8.0]
-    });
+        for (let j = 0; j < 10; j++) {
+            scene.addEntity({
+                descriptorId: 'hexTile',
+                sceneTransform: [padding * j + (startX + width * j), padding * i + curY, tileZ]
+            });
+        }
+        curY += quarterHeight;
+    }
 
     renderer.drawScene(scene);
 });
